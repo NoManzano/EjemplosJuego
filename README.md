@@ -11,11 +11,11 @@ y como editor se esta utilizando Visual Studio Code.
 
 [Instalar las librerias](./docs/librerias.md)
 
-[Clonar el repositorio](./docs/librerias.md)
+[Clonar el repositorio](./docs/fork.md)
 
 ## Como ejecutar los ejemplos
 
-Instalar todas las dependencias descritas abajo y dentro de una terminal de vscode ejecutar:
+Instalar todas las dependencias descritas arriba y dentro de una terminal de vscode ejecutar:
 
 > make run'NombreEjecutable'
 
