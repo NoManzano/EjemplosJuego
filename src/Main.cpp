@@ -3,6 +3,7 @@
 #include "Mapa.h"
 #include "Personaje.h"
 #include "Bomba.h"
+#include "Mejora.h"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(272, 208), "Bomberman 2 Jugadores");
@@ -13,7 +14,13 @@ int main() {
     Personaje jugador2(sf::Vector2f((Mapa::ancho - 2) * Mapa::tile, (Mapa::alto - 2) * Mapa::tile), "assets/images/animacion.png");
 
     std::vector<Bomba> bombas; // Lista de bombas
+
     double velocidad = 0.06;
+
+    // Añadir mejoras al inicio del juego
+    mapa.mejoras.emplace_back(sf::Vector2f(3 * Mapa::tile, 3 * Mapa::tile), Mapa::VELOCIDAD);
+    mapa.mejoras.emplace_back(sf::Vector2f(5 * Mapa::tile, 5 * Mapa::tile), Mapa::ALCANCE);
+    mapa.mejoras.emplace_back(sf::Vector2f(7 * Mapa::tile, 7 * Mapa::tile), Mapa::BOMBA_EXTRA);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -69,12 +76,56 @@ int main() {
         bombas.erase(std::remove_if(bombas.begin(), bombas.end(),
             [](const Bomba& b) { return b.explotada; }), bombas.end());
 
+        // Mejora de jugadores
+        for (auto it = mapa.mejoras.begin(); it != mapa.mejoras.end();) {
+            if (jugador1.getPosition().x < it->getPosition().x + Mapa::tile &&
+                jugador1.getPosition().x + Mapa::tile > it->getPosition().x &&
+                jugador1.getPosition().y < it->getPosition().y + Mapa::tile &&
+                jugador1.getPosition().y + Mapa::tile > it->getPosition().y) {
+                // Aplicar la mejora al jugador 1
+                switch (it->getTipo()) {
+                case Mapa::VELOCIDAD:
+                    velocidad += 0.02;
+                    break;
+                case Mapa::ALCANCE:
+                    jugador1.aumentarAlcance();
+                    break;
+                case Mapa::BOMBA_EXTRA:
+                    jugador1.aumentarBombas();
+                    break;
+                }
+                it = mapa.mejoras.erase(it); // Eliminar la mejora del mapa
+            } else if (jugador2.getPosition().x < it->getPosition().x + Mapa::tile &&
+                       jugador2.getPosition().x + Mapa::tile > it->getPosition().x &&
+                       jugador2.getPosition().y < it->getPosition().y + Mapa::tile &&
+                       jugador2.getPosition().y + Mapa::tile > it->getPosition().y) {
+                // Aplicar la mejora al jugador 2
+                switch (it->getTipo()) {
+                case Mapa::VELOCIDAD:
+                    velocidad += 0.02;
+                    break;
+                case Mapa::ALCANCE:
+                    jugador2.aumentarAlcance();
+                    break;
+                case Mapa::BOMBA_EXTRA:
+                    jugador2.aumentarBombas();
+                    break;
+                }
+                it = mapa.mejoras.erase(it); // Eliminar la mejora del mapa
+            } else {
+                ++it;
+            }
+        }
+
         window.clear();
         mapa.draw(window);
         jugador1.draw(window);
         jugador2.draw(window);
         for (auto& bomba : bombas) {
             bomba.draw(window);
+        }
+        for (auto& mejora : mapa.mejoras) {
+            mejora.draw(window);
         }
         window.display();
     }

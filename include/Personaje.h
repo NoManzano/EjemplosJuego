@@ -11,7 +11,9 @@ public:
         sprite.setTexture(texture);
         sprite.setPosition(position);
         sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
-        sprite.setScale(Mapa::tile / 16.f, Mapa::tile / 16.f); // Escala el sprite al tamaño del tile
+        
+        // Reducir el tamaño del personaje
+        sprite.setScale(Mapa::tile / 17.f, Mapa::tile / 17.f); // Escala ajustada a 15
     }
 
     void move(float offsetX, float offsetY, Mapa& mapa) {
@@ -72,6 +74,14 @@ public:
         return sprite.getPosition();
     }
 
+    void aumentarAlcance() {
+        alcanceExplosiones += 1; // Incrementar el alcance de las explosiones
+    }
+
+    void aumentarBombas() {
+        maxBombas += 1; // Incrementar el número máximo de bombas que puede colocar
+    }
+
 private:
     sf::Sprite sprite;
     sf::Texture texture;
@@ -82,4 +92,6 @@ private:
     int frameWidth = 16;
     int frameHeight = 16;
     int frameSpacing = 1; // Espacio entre frames
+    int alcanceExplosiones = 0; // Alcance de las explosiones
+    int maxBombas = 0; // Número máximo de bombas que puede colocar
 };
